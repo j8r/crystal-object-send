@@ -1,0 +1,9 @@
+name: object-send
+version: 0.1.0
+
+authors:
+  - Julien Reichardt <mi@jrei.ch>
+
+description: Interpret a String to an Object method call
+
+license: ISC
