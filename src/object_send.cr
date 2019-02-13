@@ -6,6 +6,11 @@ class Object
   macro send(call)
     {% supported_types = %w(String Int Char Nil Float64) %}
     {% arg_count = [1, 2, 3, 4] %}
+    {% for arg_num in arg_count %}\
+    arg{{arg_num.id}} = nil
+    {% end %}
+    arg_number = 0
+
     cast = -> (string : String) {
       if string.starts_with?('"') && string.ends_with?('"')
         string.lchop.rchop
@@ -19,8 +24,7 @@ class Object
         raise "unsupported type: " + string
       end
     }
-    arg1 = arg2 = arg3 = arg4 = nil
-    arg_number = 0
+
     if {{call.id}}.ends_with? ')'
       method, str_args = {{call.id}}.rchop(')').split('(', limit: 2)
     elsif {{call.id}}.includes? ' '
@@ -70,19 +74,18 @@ class Object
               method.name == "to_h" ||
               method.name.ends_with?('=') %}\
       # {{method.name}} {{method.args}}
-      {% elsif method.args.empty? %}\
-      when { {{method.name.stringify}} }
-        self.{{method.name}}
-        {% used_methods[method.name.stringify] = true %}\
       {% elsif method.args.size < 5 && method.args.all? { |t| supported_types.includes? t.restriction.stringify } %}\
       {% method_args = "" %}\
       when { {{method.name.stringify}} {% for arg in method.args %}\
               , {{arg.restriction}}\
               {% method_args = method_args + arg.restriction.stringify %}\
           {% end %}\ }
-          {% i = 0 %}
+          {% i = 0 %}\
           self.{{method.name}}(
-          {% for arg in method.args %}{% i = i + 1 %}arg{{i.id}}.as({{arg.restriction}}), {% end %}\
+          {% for arg in method.args %}\
+            {% i = i + 1 %}\
+            arg{{i.id}}.as({{arg.restriction}}),
+          {% end %}\
           )
         {% used_methods[method.name.stringify + method_args] = true %}\
         {% end %}\
