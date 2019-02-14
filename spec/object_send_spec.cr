@@ -23,6 +23,10 @@ describe "send" do
     it "lchop(Char)" do
       "abc".send("lchop('a')").should eq "bc"
     end
+
+    it "insert Index, Char" do
+      "abc".send("insert 1, 'z'").should eq "azbc"
+    end
   end
 
   describe Int32 do
@@ -40,6 +44,10 @@ describe "send" do
   describe Array do
     it "first" do
       [0, 1, 3].send("first 2").should eq [0, 1]
+    end
+
+    it "delete_at(Int, Int)" do
+      [0, 1, 3].send("delete_at(1, 1)").should eq [1]
     end
   end
 end

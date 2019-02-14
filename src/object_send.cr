@@ -39,7 +39,7 @@ class Object
           arg_number += 1
           case arg_number
           {% for arg_num in arg_count %}
-          when {{arg_num.id}} then arg{{arg_num.id}} = cast.call val
+          when {{arg_num.id}} then arg{{arg_num.id}} = cast.call val.strip
           {% end %}
           else        raise "the current max number of arguments is {{arg_count.last.id}}: " + val
           end
@@ -68,13 +68,10 @@ class Object
     {% for method in methods %}
       {% if method.accepts_block? ||
               used_methods[method.name.stringify + method.args.map(&.restriction.stringify).join("")] ||
-              (method.name.size > 1 && method.name.size < 4) ||
-              method.name == "transpose" ||
-              method.name == "product" ||
-              method.name == "to_h" ||
+              %w(sum transpose product to_h).includes?(method.name.stringify) ||
               method.name.ends_with?('=') %}\
       # {{method.name}} {{method.args}}
-      {% elsif method.args.size < 5 && method.args.all? { |t| supported_types.includes? t.restriction.stringify } %}\
+      {% elsif method.args.all? { |t| supported_types.includes? t.restriction.stringify } %}\
       {% method_args = "" %}\
       when { {{method.name.stringify}} {% for arg in method.args %}\
               , {{arg.restriction}}\

@@ -12,7 +12,7 @@ Here macros are used to build a pseudo interpreter.
 
 There are lots of limitations, this library is mainly an experiment.
 
-Usually you better avoid using it and an interpret the string on you own. It would be more performant and safer.
+Usually you better avoid using it and interpret the string on your own. It would be more performant and safer.
 
 ## Installation
 
@@ -27,12 +27,13 @@ dependencies:
 ## Examples
 
 ```cr
-"abc".send "chars"       #=> ['a', 'b', 'c']
-"abc".send "lchop('a')"  #=> "bc"
-2.send("+ 3.0")          #=> 5
+"abc".send "chars"         #=> ['a', 'b', 'c']
+"abc".send "lchop('a')"    #=> "bc"
+"abc".send "insert 1, 'z'" #=> "azbc"
+2.send("+ 3.0")            #=> 5
 
 var = "first 2"
-[0, 1, 3].send(var)      #=> [0, 1]
+[0, 1, 3].send(var)        #=> [0, 1]
 ```
 
 See more in the [specs](spec/object_send_spec.cr)
