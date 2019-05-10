@@ -66,12 +66,12 @@ class Object
     {% end %}\
     {% used_methods = {} of String => Bool? %}\
     {% for method in methods %}
+      # {{method.name}} {{method.args}}
       {% if method.accepts_block? ||
               used_methods[method.name.stringify + method.args.map(&.restriction.stringify).join("")] ||
               %w(sum transpose product to_h).includes?(method.name.stringify) ||
               method.name.ends_with?('=') %}\
-      # {{method.name}} {{method.args}}
-      {% elsif method.args.all? { |t| supported_types.includes? t.restriction.stringify } %}\
+      {% elsif method.args.all? &.restriction.stringify.split(" | ").all? { |t| supported_types.includes? t } %}\
       {% method_args = "" %}\
       when { {{method.name.stringify}} {% for arg in method.args %}\
               , {{arg.restriction}}\
