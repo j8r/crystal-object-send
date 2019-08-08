@@ -1,5 +1,6 @@
 # Crystal Object#send
 
+[![Build Status](https://cloud.drone.io/api/badges/j8r/crystal-object-send/status.svg)](https://cloud.drone.io/j8r/crystal-object-send)
 [![ISC](https://img.shields.io/badge/License-ISC-blue.svg?style=flat-square)](https://en.wikipedia.org/wiki/ISC_license)
 
 Interpret a String to an Object method call.
