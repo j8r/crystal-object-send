@@ -57,8 +57,7 @@ class Object
       # {{method.name}} {{method.args}}
       {% if method.accepts_block? ||
               used_methods[method.name.stringify + method.args.map(&.restriction.stringify).join("")] ||
-              %w(sum transpose product to_h).includes?(method.name.stringify) ||
-              method.name.ends_with?('=') %}\
+              %w(sum transpose product to_h).includes?(method.name.stringify) %}\
       {% elsif method.args.all? &.restriction.stringify.split(" | ").all? { |t| supported_types.includes? t } %}\
       {% method_args = "" %}\
       when { {{method.name.stringify}} {% for arg in method.args %}\
@@ -69,7 +68,7 @@ class Object
           self.{{method.name}}(
           {% for arg in method.args %}\
             {% i = i + 1 %}\
-            method_with_args[{{i.id}}]?.as({{arg.restriction}}),
+            method_with_args[{{i.id}}]?.as({{arg.restriction}}){% if method.args.size > 1 %},{% end %}\
           {% end %}\
           )
         {% used_methods[method.name.stringify + method_args] = true %}\

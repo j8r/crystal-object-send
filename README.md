@@ -7,7 +7,7 @@ Interpret a String to an Object method call.
 
 Similar to the Ruby's `Object#send`.
 
-Here macros are used to build a pseudo interpreter.
+Here macros and the `Crystal::Parser` are used to build a pseudo interpreter.
 
 ## Disclaimer
 
@@ -31,7 +31,7 @@ dependencies:
 "abc".send "chars"         #=> ['a', 'b', 'c']
 "abc".send "lchop('a')"    #=> "bc"
 "abc".send "insert 1, 'z'" #=> "azbc"
-2.send("+ 3.0")            #=> 5
+2.send("+ 3")              #=> 5
 
 var = "first 2"
 [0, 1, 3].send(var)        #=> [0, 1]
