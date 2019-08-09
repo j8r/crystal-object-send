@@ -35,6 +35,8 @@ dependencies:
 
 var = "first 2"
 [0, 1, 3].send(var)        #=> [0, 1]
+[0, 1, 2].send("[-1]?")    #=> eq 2
+[0, 1, 2].send("[..]")     #=> eq [0, 1, 2]
 ```
 
 See more in the [specs](spec/object_send_spec.cr)

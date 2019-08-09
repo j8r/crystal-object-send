@@ -3,45 +3,51 @@ require "compiler/crystal/syntax"
 class Object
   private def cast_node(node : Crystal::ASTNode)
     case node
-    when Crystal::StringLiteral then node.value
-    when Crystal::CharLiteral   then node.value
-    when Crystal::BoolLiteral   then node.value
-    when Crystal::NilLiteral    then nil
+    when Crystal::StringLiteral            then node.value
+    when Crystal::CharLiteral              then node.value
+    when Crystal::BoolLiteral              then node.value
+    when Crystal::NilLiteral, Crystal::Nop then nil
     when Crystal::NumberLiteral
       case node.kind
       when :f32 then node.value.to_f32
       when :f64 then node.value.to_f64
       else           node.integer_value
       end
-    when Crystal::RangeLiteral then Range.new(cast_node(node.from).as(Int), cast_node(node.to).as(Int), node.exclusive?)
+    when Crystal::RangeLiteral
+      Range.new(
+        cast_node(node.from).as(Int::Primitive?),
+        cast_node(node.to).as(Int::Primitive?),
+        node.exclusive?
+      )
     else
       raise "unsupported node type: #{node} (#{node.class}}"
     end
   end
 
   def send(call : String)
+    args = nil
+    name = nil
+    node = Crystal::Parser.parse "self." + call
+
     {% begin %}
+    {% args = %w(0 1 2 3 4 5 6 7 8 9) %}
     {% supported_types = %w(Int Bool Char Float32 Float64 Int16 Int32 Int64 Int8 String UInt16 UInt32 UInt64 UInt8 Nil Range) %}
 
-    case node = Crystal::Parser.parse(call)
+    case node
     when Crystal::Call
-      raise "max number of arguments reached: 8" if node.args.size > 9
-      if obj = node.obj
-        node.args << obj
-      end
-      {% args = %w(0 1 2 3 4 5 6 7 8 9) %}
-      method_with_args = case node.args.size
+      name = node.name
+      args = node.args
+      raise "max number of arguments reached: {{args.last.id}}" if args.size > {{args.last.id}}
+      method_with_args = case args.size
       {% for arg_num in args %}\
       when {{arg_num.id}}
-        { node.name {% for local_arg_num in args %}{% if local_arg_num < arg_num %}, cast_node(node.args[{{local_arg_num.id}}]){% end %}{% end %} }
+        { name {% for local_arg_num in args %}{% if local_arg_num < arg_num %}, cast_node(args[{{local_arg_num.id}}]){% end %}{% end %} }
       {% end %}
       end
-    else
-      raise "unsupported call: #{node}"
     end
 
     case method_with_args
-    when nil then raise "method with args should not be nil for #{call}"
+    when nil then raise "unsupported call: #{call}"
     {% methods = @type.methods %}\
     {% for type in @type.ancestors %}\
       {% methods = methods + type.methods %}\

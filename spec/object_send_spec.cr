@@ -42,6 +42,14 @@ describe "send" do
   end
 
   describe Array do
+    it "gets index with []?" do
+      [0, 1, 2].send("[1]?").should eq 1
+    end
+
+    it "gets range with []" do
+      [0, 1, 2].send("[..]").should eq [0, 1, 2]
+    end
+
     it "first" do
       [0, 1, 2].send("first 2").should eq [0, 1]
     end
