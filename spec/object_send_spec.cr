@@ -43,11 +43,17 @@ describe "send" do
 
   describe Array do
     it "first" do
-      [0, 1, 3].send("first 2").should eq [0, 1]
+      [0, 1, 2].send("first 2").should eq [0, 1]
     end
 
-    it "delete_at(Int, Int)" do
-      [0, 1, 3].send("delete_at(1, 1)").should eq [1]
+    it "deletes at Int index, Int count" do
+      [0, 1, 2].send("delete_at(1, 1)").should eq [1]
+    end
+
+    it "deletes within a Range" do
+      ary = [0, 1, 2]
+      ary.send("delete_at(1..2)").should eq [1, 2]
+      ary.should eq [0]
     end
   end
 end

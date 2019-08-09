@@ -13,6 +13,7 @@ class Object
       when :f64 then node.value.to_f64
       else           node.integer_value
       end
+    when Crystal::RangeLiteral then Range.new(cast_node(node.from).as(Int), cast_node(node.to).as(Int), node.exclusive?)
     else
       raise "unsupported node type: #{node} (#{node.class}}"
     end
@@ -20,7 +21,7 @@ class Object
 
   def send(call : String)
     {% begin %}
-    {% supported_types = %w(Int Bool Char Float32 Float64 Int16 Int32 Int64 Int8 String UInt16 UInt32 UInt64 UInt8 Nil) %}
+    {% supported_types = %w(Int Bool Char Float32 Float64 Int16 Int32 Int64 Int8 String UInt16 UInt32 UInt64 UInt8 Nil Range) %}
 
     case node = Crystal::Parser.parse(call)
     when Crystal::Call
